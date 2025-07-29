@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EscaMap: Client Escalation Heatmap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-chart-line"></i> EscaMap: Client Escalation Heatmap</h1>
+            <p class="subtitle">Visualizing client support escalation patterns across products, regions, and time</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Statistics Dashboard -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.total_escalations }}</h3>
+                        <p>Total Escalations</p>
+                    </div>
+                </div>
+                <div class="stat-card high-severity">
+                    <div class="stat-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.high_severity_count }}</h3>
+                        <p>High Severity</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.unique_clients }}</h3>
+                        <p>Unique Clients</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ stats.severity_percentage }}%</h3>
+                        <p>High Severity Rate</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <section class="tabs-section">
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('main')">
+                    <i class="fas fa-th"></i> Product Timeline
+                </button>
+                <button class="tab-button" onclick="showTab('region')">
+                    <i class="fas fa-globe"></i> Regional Analysis
+                </button>
+                <button class="tab-button" onclick="showTab('client')">
+                    <i class="fas fa-building"></i> Client Overview
+                </button>
+            </div>
+        </section>
+
+        <!-- Heatmap Sections -->
+        <section class="heatmap-section">
+            <div id="main-tab" class="tab-content active">
+                <div class="heatmap-container">
+                    <h2><i class="fas fa-calendar-alt"></i> Product Escalations Over Time</h2>
+                    <p class="description">This heatmap shows escalation severity scores across different products over monthly periods.</p>
+                    <img src="{{ url_for('static', filename='escalation_heatmap.png') }}" alt="Main Escalation Heatmap" class="heatmap-image">
+                </div>
+            </div>
+
+            <div id="region-tab" class="tab-content">
+                <div class="heatmap-container">
+                    <h2><i class="fas fa-map"></i> Regional Escalation Distribution</h2>
+                    <p class="description">View escalation patterns across different geographical regions by severity level.</p>
+                    <img src="{{ url_for('static', filename='region_heatmap.png') }}" alt="Regional Escalation Heatmap" class="heatmap-image">
+                </div>
+            </div>
+
+            <div id="client-tab" class="tab-content">
+                <div class="heatmap-container">
+                    <h2><i class="fas fa-user-tie"></i> Client-Product Escalation Matrix</h2>
+                    <p class="description">Analyze which clients are experiencing issues with specific product areas.</p>
+                    <img src="{{ url_for('static', filename='client_heatmap.png') }}" alt="Client Escalation Heatmap" class="heatmap-image">
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <section class="actions-section">
+            <div class="action-buttons">
+                <a href="/data" class="btn btn-secondary">
+                    <i class="fas fa-table"></i> View Raw Data
+                </a>
+                <button class="btn btn-primary" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 EscaMap - Client Escalation Analytics | Built for proactive customer success management</p>
+        </div>
+    </footer>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.closest('.tab-button').classList.add('active');
+        }
+
+        function refreshData() {
+            const button = event.target.closest('.btn');
+            const icon = button.querySelector('i');
+            
+            // Add spinning animation
+            icon.classList.add('fa-spin');
+            button.disabled = true;
+            
+            // Simulate refresh (in real app, this would make an API call)
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+
+        // Add some interactivity to stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
