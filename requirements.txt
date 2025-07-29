@@ -2,3 +2,7 @@ Flask
 pandas
 seaborn
 matplotlib
+Flask-Limiter
+Flask-WTF
+MarkupSafe
+pathlib
