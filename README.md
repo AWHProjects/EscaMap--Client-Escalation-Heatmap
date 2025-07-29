@@ -274,7 +274,8 @@ Perfect for showcasing technical skills to potential employers in Technical Acco
 ## 📞 **Support**
 
 For questions, issues, or contributions:
-- 📧 **Email**: [your-email@example.com]
+- 👤 **Creator**: Adam Hobgood
+- 💼 **LinkedIn**: [https://www.linkedin.com/in/awhobgood/](https://www.linkedin.com/in/awhobgood/)
 - 🐛 **Issues**: [GitHub Issues](https://github.com/AWHProjects/EscaMap--Client-Escalation-Heatmap/issues)
 - 📖 **Documentation**: [Security Guide](SECURITY.md)
 
