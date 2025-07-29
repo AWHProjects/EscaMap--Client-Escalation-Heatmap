@@ -6,14 +6,31 @@ import os
 import logging
 from markupsafe import Markup
 from functools import wraps
+import sys
+sys.path.append('..')
+from config import SecurityConfig
+try:
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
+    LIMITER_AVAILABLE = True
+except ImportError:
+    LIMITER_AVAILABLE = False
+    logging.warning("Flask-Limiter not available. Rate limiting disabled.")
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
-# SECURITY: Configure Flask security settings
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(32))
-app.config['SESSION_COOKIE_SECURE'] = True
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+# SECURITY: Load security configuration
+app.config.from_object(SecurityConfig)
+
+# SECURITY: Initialize rate limiter if available
+if LIMITER_AVAILABLE:
+    limiter = Limiter(
+        app,
+        key_func=get_remote_address,
+        default_limits=["200 per day", "50 per hour"]
+    )
+else:
+    limiter = None
 
 # SECURITY: Add security headers to all responses
 @app.after_request
@@ -51,6 +68,7 @@ def add_security_headers(response):
     return response
 
 @app.route('/')
+@limiter.limit("10 per minute") if limiter else lambda f: f
 def home():
     """Main route that displays the escalation heatmap dashboard."""
     try:
@@ -82,6 +100,7 @@ def home():
         return "An error occurred while loading the dashboard. Please try again later.", 500
 
 @app.route('/data')
+@limiter.limit("5 per minute") if limiter else lambda f: f
 def data_view():
     """Route to view raw data in table format."""
     try:
